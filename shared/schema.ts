@@ -9,6 +9,7 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   fullName: text("full_name").notNull(),
   password: text("password").notNull(),
+  personalWalletId: varchar("personal_wallet_id"), // Reference to user's personal wallet
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -23,6 +24,7 @@ export const savingsGroups = pgTable("savings_groups", {
   currentRound: integer("current_round").notNull().default(1),
   currentTurnIndex: integer("current_turn_index").notNull().default(0),
   isActive: boolean("is_active").notNull().default(true),
+  walletId: varchar("wallet_id"), // Reference to App A's wallet
   createdById: varchar("created_by_id").notNull().references(() => users.id),
   createdAt: timestamp("created_at").defaultNow(),
 });

@@ -4,6 +4,7 @@ import { registerUserRoutes } from "./users";
 import { registerGroupRoutes } from "./groups";
 import { registerPaymentRoutes } from "./payments";
 import { registerActivityRoutes } from "./activities";
+import walletRoutes from "./walletRoutes";
 
 export function registerAllRoutes(app: Express) {
   registerAuthRoutes(app);
@@ -11,4 +12,5 @@ export function registerAllRoutes(app: Express) {
   registerGroupRoutes(app);
   registerPaymentRoutes(app);
   registerActivityRoutes(app);
+  app.use("/api/wallet", walletRoutes);
 }

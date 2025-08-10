@@ -25,6 +25,16 @@ export default function GroupDetails() {
     enabled: !!groupId
   });
 
+  const { data: walletBalance, isLoading: walletLoading } = useQuery({
+    queryKey: ['/api/wallet/groups', groupId, 'wallet/balance'],
+    queryFn: async () => {
+      const response = await fetch(`/api/wallet/groups/${groupId}/wallet/balance`);
+      if (!response.ok) throw new Error('Failed to fetch wallet balance');
+      return response.json();
+    },
+    enabled: !!groupId && !!group?.walletId
+  });
+
   if (isLoading) {
     return (
       <div className="mobile-container">
@@ -118,20 +128,35 @@ export default function GroupDetails() {
               )}
             </div>
             
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-2 gap-4 text-center mb-4">
               <div>
                 <div className="text-lg font-bold text-primary">{group.memberCount}</div>
                 <div className="text-xs text-gray-600">Members</div>
-              </div>
-              <div>
-                <div className="text-lg font-bold text-primary">${group.contributionAmount}</div>
-                <div className="text-xs text-gray-600 capitalize">{group.frequency}</div>
               </div>
               <div>
                 <div className="text-lg font-bold text-primary">
                   {group.currentTurnIndex + 1}/{group.memberCount}
                 </div>
                 <div className="text-xs text-gray-600">Round</div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 text-center">
+              <div>
+                <div className="text-lg font-bold text-primary">{formatCurrency(group.contributionAmount, group.currency)}</div>
+                <div className="text-xs text-gray-600 capitalize">{group.frequency}</div>
+              </div>
+              <div>
+                <div className="text-lg font-bold text-green-600">
+                  {walletLoading ? (
+                    <div className="h-4 bg-gray-200 rounded animate-pulse w-16 mx-auto" />
+                  ) : walletBalance ? (
+                    formatCurrency(walletBalance.balance, walletBalance.currency)
+                  ) : (
+                    'No Wallet'
+                  )}
+                </div>
+                <div className="text-xs text-gray-600">Group Balance</div>
               </div>
             </div>
 

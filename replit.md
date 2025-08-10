@@ -31,19 +31,37 @@ The server follows a RESTful API design using Express.js with TypeScript. The ar
 ### Database Design
 The application uses a relational database schema with the following core entities:
 
-- **Users**: Authentication and profile information
-- **Savings Groups**: Group configuration including contribution amounts, frequency, and turn rotation
+- **Users**: Authentication and profile information with optional personal wallet references
+- **Savings Groups**: Group configuration including contribution amounts, frequency, turn rotation, and wallet integration
 - **Group Members**: Many-to-many relationship between users and groups with turn order management
 - **Payments**: Contribution and payout tracking with status management
 - **Activities**: Audit trail for user actions and system events
 
 The schema is defined using Drizzle ORM with PostgreSQL as the target database dialect, though the current implementation uses in-memory storage for development.
 
+**Wallet Integration Fields:**
+- `savingsGroups.walletId`: References the group's wallet in App A
+- `users.personalWalletId`: References the user's personal wallet in App A
+
 ### Authentication & Security
 Currently implements a basic authentication system with username/password login. The demo environment includes a pre-seeded user account for testing purposes. Production deployment would require implementing secure session management and password hashing.
 
+### Wallet Integration (App A Integration)
+RotaSave integrates with App A's wallet management service to provide secure financial operations:
+
+- **Automatic Wallet Creation**: When users create savings groups, a corresponding wallet is automatically created in App A
+- **Group Wallet Management**: Each savings group has its own wallet with balance tracking and transaction history
+- **API Integration**: Uses REST APIs with API key authentication to communicate with App A's wallet service
+- **Real-time Balance Display**: Group wallet balances are displayed in the group details page
+- **Payment Processing**: All contributions and payouts flow through App A's secure wallet system
+- **Multi-currency Support**: Wallets support the same currencies as the savings groups (USD, EUR, GBP, JPY, CAD, AUD, MXN, BRL, INR, CNY)
+
 ### Development Environment
 The project uses Vite for development with hot module replacement and optimized builds. The configuration supports both client and server development with automatic compilation and serving of static assets.
+
+**Environment Variables for Wallet Integration:**
+- `WALLET_API_KEY`: API key for authenticating with App A's wallet service
+- `WALLET_SERVICE_URL`: Base URL for App A's wallet API (defaults to http://localhost:3001)
 
 ## External Dependencies
 

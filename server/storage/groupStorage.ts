@@ -1,5 +1,6 @@
 import { type SavingsGroup, type InsertSavingsGroup, type GroupWithMembers, type User, type GroupMember } from "@shared/schema";
 import { type IGroupStorage, type IMemberStorage, type IPaymentStorage, type IUserStorage } from "./interfaces";
+import { walletService } from "../services/walletService";
 import { randomUUID } from "crypto";
 
 export class MemGroupStorage implements IGroupStorage {
@@ -72,11 +73,27 @@ export class MemGroupStorage implements IGroupStorage {
 
   async createSavingsGroup(insertGroup: InsertSavingsGroup): Promise<SavingsGroup> {
     const id = randomUUID();
+    
+    // Create wallet for the group
+    let walletId: string | null = null;
+    try {
+      const wallet = await walletService.createWallet({
+        groupId: id,
+        currency: insertGroup.currency || 'USD',
+        isGroupWallet: true,
+      });
+      walletId = wallet.id;
+    } catch (error) {
+      console.warn('Failed to create wallet for group:', error);
+      // Continue without wallet for now - can be created later
+    }
+    
     const group: SavingsGroup = {
       ...insertGroup,
       id,
       description: insertGroup.description || null,
       currency: insertGroup.currency || 'USD',
+      walletId,
       currentRound: 1,
       currentTurnIndex: 0,
       isActive: true,
