@@ -23,7 +23,7 @@ The client-side is built as a single-page application using React with TypeScrip
 The server follows a RESTful API design using Express.js with TypeScript. The architecture emphasizes modularity and maintainability:
 
 - **API Layer**: Modular route structure organized by domain (auth, users, groups, payments, activities) for better code organization and maintainability
-- **Data Layer**: Abstracted through an IStorage interface with an in-memory implementation for development/demo purposes
+- **Data Layer**: Modular storage structure organized by domain (users, groups, members, payments, activities) with clean interface separation and dependency injection
 - **Business Logic**: Embedded within storage methods and route handlers for group management, payment processing, and activity tracking
 - **Type Safety**: Shared type definitions between client and server using Drizzle schemas
 - **Route Organization**: Domain-specific route modules that are composed together for clean separation of concerns
