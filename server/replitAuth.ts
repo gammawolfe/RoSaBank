@@ -102,14 +102,27 @@ export async function setupAuth(app: Express) {
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    const hostname = req.hostname || 'localhost';
+    const strategyName = `replitauth:${hostname}`;
+    
+    // Check if strategy exists
+    if (!passport._strategy(strategyName)) {
+      console.error(`Auth strategy not found for hostname: ${hostname}`);
+      console.log('Available strategies:', Object.keys(passport._strategies || {}));
+      return res.status(500).json({ error: 'Authentication not configured properly' });
+    }
+    
+    passport.authenticate(strategyName, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    const hostname = req.hostname || 'localhost';
+    const strategyName = `replitauth:${hostname}`;
+    
+    passport.authenticate(strategyName, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
     })(req, res, next);
