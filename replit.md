@@ -20,12 +20,13 @@ The client-side is built as a single-page application using React with TypeScrip
 - **Form Handling**: React Hook Form with Zod validation for type-safe form processing
 
 ### Backend Architecture
-The server follows a RESTful API design using Express.js with TypeScript. The architecture emphasizes simplicity and maintainability:
+The server follows a RESTful API design using Express.js with TypeScript. The architecture emphasizes modularity and maintainability:
 
-- **API Layer**: Express.js routes handle HTTP requests with middleware for logging and error handling
+- **API Layer**: Modular route structure organized by domain (auth, users, groups, payments, activities) for better code organization and maintainability
 - **Data Layer**: Abstracted through an IStorage interface with an in-memory implementation for development/demo purposes
 - **Business Logic**: Embedded within storage methods and route handlers for group management, payment processing, and activity tracking
 - **Type Safety**: Shared type definitions between client and server using Drizzle schemas
+- **Route Organization**: Domain-specific route modules that are composed together for clean separation of concerns
 
 ### Database Design
 The application uses a relational database schema with the following core entities:
