@@ -5,12 +5,15 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CreditCard, TrendingUp, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { useCurrency } from "@/hooks/use-currency";
 import type { PaymentWithDetails } from "@shared/schema";
 
 // Demo user ID - in a real app this would come from auth context
 const DEMO_USER_ID = "demo-user-1";
 
 export default function Payments() {
+  const { formatCurrency } = useCurrency();
+  
   const { data: payments, isLoading } = useQuery<PaymentWithDetails[]>({
     queryKey: ['/api/payments', { userId: DEMO_USER_ID }],
     queryFn: async () => {
@@ -44,6 +47,8 @@ export default function Payments() {
 
   const totalPaid = payments?.filter(p => p.status === 'completed' && p.type === 'contribution')
     .reduce((sum, p) => sum + parseFloat(p.amount), 0) || 0;
+  
+  const primaryCurrency = payments?.[0]?.group.currency || 'USD';
 
   const pendingPayments = payments?.filter(p => p.status === 'pending').length || 0;
 
@@ -65,7 +70,7 @@ export default function Payments() {
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
-                  ${totalPaid.toFixed(2)}
+                  {formatCurrency(totalPaid, primaryCurrency)}
                 </div>
                 <div className="text-sm text-gray-600">Total Paid</div>
               </div>
@@ -130,7 +135,7 @@ export default function Payments() {
                       </div>
                       <div className="text-right">
                         <div className="text-lg font-bold text-primary">
-                          ${parseFloat(payment.amount).toFixed(2)}
+                          {formatCurrency(payment.amount, payment.group.currency)}
                         </div>
                         <Badge variant={getStatusColor(payment.status) as any} className="text-xs">
                           {payment.status}

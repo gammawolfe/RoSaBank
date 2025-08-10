@@ -12,6 +12,7 @@ import { ArrowLeft, Users } from "lucide-react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { insertSavingsGroupSchema } from "@shared/schema";
+import { getCurrencyOptions } from "@shared/currencies";
 import { z } from "zod";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -35,6 +36,7 @@ export default function CreateGroup() {
       name: "",
       description: "",
       contributionAmount: "",
+      currency: "USD",
       frequency: "monthly",
       maxMembers: 8,
       createdById: DEMO_USER_ID,
@@ -123,6 +125,7 @@ export default function CreateGroup() {
                           className="resize-none"
                           rows={3}
                           {...field}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />
@@ -130,24 +133,51 @@ export default function CreateGroup() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="contributionAmount"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Contribution Amount ($)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number"
-                          placeholder="100.00"
-                          step="0.01"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="contributionAmount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contribution Amount</FormLabel>
+                        <FormControl>
+                          <Input 
+                            type="number"
+                            placeholder="100.00"
+                            step="0.01"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="currency"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Currency</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select currency" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {getCurrencyOptions().map((currency) => (
+                              <SelectItem key={currency.value} value={currency.value}>
+                                {currency.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
                 <FormField
                   control={form.control}

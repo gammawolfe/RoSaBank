@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLocation } from "wouter";
 import { Users, Plus, CreditCard, TrendingUp } from "lucide-react";
+import { useCurrency } from "@/hooks/use-currency";
 import type { GroupWithMembers, Activity } from "@shared/schema";
 
 // Demo user ID - in a real app this would come from auth context
@@ -14,6 +15,7 @@ const DEMO_USER_ID = "demo-user-1";
 
 export default function Home() {
   const [, navigate] = useLocation();
+  const { formatCurrency } = useCurrency();
 
   const { data: groups, isLoading: groupsLoading } = useQuery<GroupWithMembers[]>({
     queryKey: ['/api/groups', { userId: DEMO_USER_ID }],
@@ -34,6 +36,7 @@ export default function Home() {
   });
 
   const totalSaved = groups?.reduce((sum, group) => sum + group.totalPaid, 0) || 0;
+  const primaryCurrency = groups?.[0]?.currency || 'USD';
 
   return (
     <div className="mobile-container">
@@ -59,7 +62,7 @@ export default function Home() {
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-secondary">
-                  ${totalSaved.toFixed(2)}
+                  {formatCurrency(totalSaved, primaryCurrency)}
                 </div>
                 <div className="text-sm text-gray-600">Total Saved</div>
               </div>

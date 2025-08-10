@@ -17,6 +17,7 @@ export const savingsGroups = pgTable("savings_groups", {
   name: text("name").notNull(),
   description: text("description"),
   contributionAmount: decimal("contribution_amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default('USD'),
   frequency: text("frequency").notNull(), // 'monthly', 'weekly', 'bi-weekly'
   maxMembers: integer("max_members").notNull(),
   currentRound: integer("current_round").notNull().default(1),
@@ -71,6 +72,7 @@ export const insertSavingsGroupSchema = createInsertSchema(savingsGroups).pick({
   name: true,
   description: true,
   contributionAmount: true,
+  currency: true,
   frequency: true,
   maxMembers: true,
   createdById: true,

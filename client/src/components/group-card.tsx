@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Eye, DollarSign, Clock, CheckCircle, AlertTriangle } from "lucide-react";
 import { useLocation } from "wouter";
 import type { GroupWithMembers } from "@shared/schema";
+import { useCurrency } from "@/hooks/use-currency";
 
 interface GroupCardProps {
   group: GroupWithMembers;
@@ -12,6 +13,7 @@ interface GroupCardProps {
 
 export function GroupCard({ group }: GroupCardProps) {
   const [, navigate] = useLocation();
+  const { formatCurrency } = useCurrency();
 
   const progressPercent = (group.currentTurnIndex + 1) / group.memberCount * 100;
   
@@ -55,7 +57,7 @@ export function GroupCard({ group }: GroupCardProps) {
     if (group.userPaymentStatus === 'paid') {
       return 'Paid ✓';
     }
-    return `Pay $${group.contributionAmount}`;
+    return `Pay ${formatCurrency(group.contributionAmount, group.currency)}`;
   };
 
   return (
@@ -77,7 +79,7 @@ export function GroupCard({ group }: GroupCardProps) {
         
         <div className="flex items-center justify-between text-sm text-gray-600 mb-3">
           <span>{group.memberCount} members</span>
-          <span>${group.contributionAmount}/{group.frequency}</span>
+          <span>{formatCurrency(group.contributionAmount, group.currency)}/{group.frequency}</span>
         </div>
         
         {/* Progress Bar */}
@@ -104,8 +106,8 @@ export function GroupCard({ group }: GroupCardProps) {
                   </div>
                   <div className="text-xs text-gray-600">
                     {group.currentTurnMember.fullName === "Demo User" 
-                      ? `Receiving $${(parseFloat(group.contributionAmount) * group.memberCount).toFixed(2)}` 
-                      : `Collecting $${(parseFloat(group.contributionAmount) * group.memberCount).toFixed(2)}`
+                      ? `Receiving ${formatCurrency(parseFloat(group.contributionAmount) * group.memberCount, group.currency)}` 
+                      : `Collecting ${formatCurrency(parseFloat(group.contributionAmount) * group.memberCount, group.currency)}`
                     }
                   </div>
                 </>

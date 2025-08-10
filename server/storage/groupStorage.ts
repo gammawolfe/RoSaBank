@@ -76,6 +76,7 @@ export class MemGroupStorage implements IGroupStorage {
       ...insertGroup,
       id,
       description: insertGroup.description || null,
+      currency: insertGroup.currency || 'USD',
       currentRound: 1,
       currentTurnIndex: 0,
       isActive: true,

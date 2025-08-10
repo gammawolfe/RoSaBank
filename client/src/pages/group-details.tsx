@@ -6,11 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { ArrowLeft, Users, DollarSign, Calendar, CheckCircle, Clock, User } from "lucide-react";
 import { useLocation } from "wouter";
+import { useCurrency } from "@/hooks/use-currency";
 import type { GroupWithMembers } from "@shared/schema";
 
 export default function GroupDetails() {
   const [, params] = useRoute("/groups/:id");
   const [, navigate] = useLocation();
+  const { formatCurrency } = useCurrency();
   const groupId = params?.id;
 
   const { data: group, isLoading } = useQuery<GroupWithMembers>({
