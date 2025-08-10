@@ -1,3 +1,10 @@
+import {
+  users,
+  type User,
+  type UpsertUser,
+} from "@shared/schema";
+import { db } from "../db";
+import { eq } from "drizzle-orm";
 import { type IStorage } from "./interfaces";
 import { MemUserStorage } from "./userStorage";
 import { MemMemberStorage } from "./memberStorage";
@@ -23,6 +30,13 @@ export class MemStorage implements IStorage {
 
   // User methods
   async getUser(id: string) {
+    // Try database first for Replit Auth users
+    try {
+      const [user] = await db.select().from(users).where(eq(users.id, id));
+      if (user) return user;
+    } catch (error) {
+      console.warn("Database query failed, falling back to memory storage:", error);
+    }
     return this.userStorage.getUser(id);
   }
 
@@ -36,6 +50,27 @@ export class MemStorage implements IStorage {
 
   async createUser(user: Parameters<MemUserStorage['createUser']>[0]) {
     return this.userStorage.createUser(user);
+  }
+
+  // Required for Replit Auth
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    try {
+      const [user] = await db
+        .insert(users)
+        .values(userData)
+        .onConflictDoUpdate({
+          target: users.id,
+          set: {
+            ...userData,
+            updatedAt: new Date(),
+          },
+        })
+        .returning();
+      return user;
+    } catch (error) {
+      console.error("Database upsert failed:", error);
+      throw error;
+    }
   }
 
   // Group methods

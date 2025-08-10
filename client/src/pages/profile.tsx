@@ -3,16 +3,24 @@ import { Header } from "@/components/layout/header";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { User, Mail, Settings, HelpCircle, LogOut, Shield } from "lucide-react";
-
-// Demo user data - in a real app this would come from auth context
-const DEMO_USER = {
-  id: "demo-user-1",
-  fullName: "Demo User",
-  username: "demo",
-  email: "demo@example.com"
-};
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Profile() {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return (
+      <div className="mobile-container">
+        <div className="bg-primary h-6" />
+        <Header title="Profile" />
+        <div className="p-4">
+          <div className="text-center">
+            <p className="text-gray-600">Loading user profile...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="mobile-container">
       {/* Status Bar */}
@@ -28,8 +36,10 @@ export default function Profile() {
               <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-3">
                 <User className="h-10 w-10 text-white" />
               </div>
-              <h2 className="text-xl font-semibold text-gray-800">{DEMO_USER.fullName}</h2>
-              <p className="text-gray-600">@{DEMO_USER.username}</p>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'User'}
+              </h2>
+              <p className="text-gray-600">{user.email || 'No email'}</p>
             </div>
             
             <div className="space-y-3">
@@ -37,7 +47,7 @@ export default function Profile() {
                 <Mail className="h-5 w-5 text-gray-500 mr-3" />
                 <div>
                   <div className="text-sm font-medium">Email</div>
-                  <div className="text-sm text-gray-600">{DEMO_USER.email}</div>
+                  <div className="text-sm text-gray-600">{user.email || 'No email provided'}</div>
                 </div>
               </div>
               
