@@ -127,7 +127,12 @@ export default function Landing() {
               </p>
               <Button 
                 className="w-full"
-                onClick={() => window.location.href = '/api/login'}
+                onClick={() => {
+                  // For demo purposes - simulate login by refreshing the page
+                  // In production, this will redirect to actual login
+                  console.log('Attempting login...');
+                  window.location.href = '/api/login';
+                }}
               >
                 Create Your Account
               </Button>

@@ -15,11 +15,20 @@ import Profile from "@/pages/profile";
 import Landing from "@/pages/landing";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
 
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
+      {isLoading ? (
+        <Route path="/" component={() => (
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading...</p>
+            </div>
+          </div>
+        )} />
+      ) : !isAuthenticated && !user ? (
         <Route path="/" component={Landing} />
       ) : (
         <>
